@@ -1,10 +1,7 @@
 package org.elainevalles.httpserver.util;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.databind.*;
 
 import java.io.IOException;
 
@@ -34,13 +31,20 @@ public class Json {
         return myObjectMapper.valueToTree(obj);
     }
 
+    public static String stringify(JsonNode node) throws JsonProcessingException {
+        return generateJson(node, false);
+    }
+
+    public static String stringifyFlag(JsonNode node) throws JsonProcessingException {
+        return generateJson(node, true);
+    }
+
     // Generate json
-    private static String generateJson(Object o) {
-        try {
-            ObjectWriter  writer = myObjectMapper.writer();
-            return writer.writeValueAsString(o);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+    private static String generateJson(Object o, boolean flag) throws JsonProcessingException {
+            ObjectWriter  objwriter = myObjectMapper.writer();
+            if (flag) {
+                objwriter = objwriter.with(SerializationFeature.INDENT_OUTPUT);
+            }
+            return objwriter.writeValueAsString(o);
     }
 }
