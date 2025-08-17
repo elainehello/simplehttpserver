@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 
 import java.io.IOException;
 
@@ -31,5 +32,15 @@ public class Json {
     // Parse POJO to Json
     public static JsonNode toJson(Object obj) throws JsonProcessingException {
         return myObjectMapper.valueToTree(obj);
+    }
+
+    // Generate json
+    private static String generateJson(Object o) {
+        try {
+            ObjectWriter  writer = myObjectMapper.writer();
+            return writer.writeValueAsString(o);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }
