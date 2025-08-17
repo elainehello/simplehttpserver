@@ -1,5 +1,6 @@
 package org.elainevalles.httpserver.util;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -20,5 +21,15 @@ public class Json {
     // Signals that an I/O exception of some sort has occurred
     public static JsonNode ParseJsonToJsonNode(String jsonSrc) throws IOException {
         return myObjectMapper.readTree(jsonSrc);
+    }
+
+    // Parse Json to POJO
+    public static <A> A fromJson(JsonNode node, Class<A> clazz) throws JsonProcessingException {
+        return myObjectMapper.treeToValue(node, clazz);
+    }
+
+    // Parse POJO to Json
+    public static JsonNode toJson(Object obj) throws JsonProcessingException {
+        return myObjectMapper.valueToTree(obj);
     }
 }
