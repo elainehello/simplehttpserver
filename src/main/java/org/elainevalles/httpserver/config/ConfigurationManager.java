@@ -1,5 +1,10 @@
 package org.elainevalles.httpserver.config;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.elainevalles.httpserver.util.Json;
+
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
@@ -22,17 +27,17 @@ public class ConfigurationManager {
     /*
     * Load Configuration file by the path provided
     * */
-    public void loadConfigurationFile(String filePath) {
-        try (FileReader reader = new FileReader(filePath)) {
-            StringBuffer sb = new StringBuffer();
-            int i;
-            while ((i = reader.read()) != -1) {
-                sb.append((char) i);
-            }
-        } catch (IOException e) {
-            System.err.println("Error reading configuration file: " + e.getMessage());
-            e.printStackTrace();
+    public void loadConfigurationFile(String filePath) throws IOException {
+        FileReader reader = new FileReader(filePath);
+        StringBuffer sb = new StringBuffer();
+        int i;
+        while ((i = reader.read()) != -1) {
+            sb.append((char) i);
         }
+        ObjectMapper  mapper = new ObjectMapper();
+        // Parse JSON string to JsonNode
+        JsonNode conf = mapper.readTree(sb.toString());
+        myCurrentConfig = Json.fromJson(conf, Configuration.class);
     }
 
     /*
