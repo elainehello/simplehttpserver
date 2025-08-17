@@ -28,7 +28,7 @@ public class ConfigurationManager {
     /*
     * Load Configuration file by the path provided
     * */
-    public void loadConfigurationFile(String filePath) throws JsonProcessingException {
+    public void loadConfigurationFile(String filePath) {
         FileReader reader = null;
         try {
             reader = new FileReader(filePath);
@@ -37,19 +37,26 @@ public class ConfigurationManager {
         }
         StringBuffer sb = new StringBuffer();
         int i;
-        while (true) {
-            try {
-                if (((i = reader.read()) != -1))
-                    break;
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+        try {
+            while ((i = reader.read()) != -1) {
+                sb.append((char) i);
             }
-            sb.append((char) i);
+        } catch (IOException e) {
+            throw new HttpConfigurationException(e);
         }
         ObjectMapper  mapper = new ObjectMapper();
         // Parse JSON string to JsonNode
-        JsonNode conf = mapper.readTree(sb.toString());
-        myCurrentConfig = Json.fromJson(conf, Configuration.class);
+        JsonNode conf = null;
+        try {
+            conf = mapper.readTree(sb.toString());
+        } catch (JsonProcessingException e) {
+            throw new HttpConfigurationException("Error reading configuration file", e);
+        }
+        try {
+            myCurrentConfig = Json.fromJson(conf, Configuration.class);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Error parsing configuration file", e);
+        }
     }
 
     /*
