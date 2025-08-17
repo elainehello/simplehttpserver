@@ -41,9 +41,13 @@ public class ConfigurationManager {
     }
 
     /*
-    * Get current Loaded Configuration
+    * Returns current Loaded Configuration
     * */
-    public void getCurrentConfig() {
+    public Configuration getCurrentConfig() {
+        if (myCurrentConfig == null) {
+            throw new HttpConfigurationException("No current configuration found");
+        }
+        return  myCurrentConfig;
     }
 
 }
