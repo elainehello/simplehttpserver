@@ -1,5 +1,6 @@
 package org.elainevalles.httpserver.config;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.elainevalles.httpserver.util.Json;
@@ -27,11 +28,22 @@ public class ConfigurationManager {
     /*
     * Load Configuration file by the path provided
     * */
-    public void loadConfigurationFile(String filePath) throws IOException {
-        FileReader reader = new FileReader(filePath);
+    public void loadConfigurationFile(String filePath) throws JsonProcessingException {
+        FileReader reader = null;
+        try {
+            reader = new FileReader(filePath);
+        } catch (FileNotFoundException e) {
+            throw new HttpConfigurationException(e);
+        }
         StringBuffer sb = new StringBuffer();
         int i;
-        while ((i = reader.read()) != -1) {
+        while (true) {
+            try {
+                if (((i = reader.read()) != -1))
+                    break;
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
             sb.append((char) i);
         }
         ObjectMapper  mapper = new ObjectMapper();
