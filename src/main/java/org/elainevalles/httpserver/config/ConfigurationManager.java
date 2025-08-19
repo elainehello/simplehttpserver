@@ -26,26 +26,21 @@ public class ConfigurationManager {
     }
 
     /*
-    * Load Configuration file by the path provided
-    * */
+     * Load Configuration file by the path provided
+     */
     public void loadConfigurationFile(String filePath) {
-        FileReader reader = null;
-        try {
-            reader = new FileReader(filePath);
-        } catch (FileNotFoundException e) {
-            throw new HttpConfigurationException(e);
-        }
-        StringBuffer sb = new StringBuffer();
-        int i;
-        try {
+        StringBuilder sb = new StringBuilder();
+        try (FileReader reader = new FileReader(filePath)) {
+            int i;
             while ((i = reader.read()) != -1) {
                 sb.append((char) i);
             }
+        } catch (FileNotFoundException e) {
+            throw new HttpConfigurationException(e);
         } catch (IOException e) {
             throw new HttpConfigurationException(e);
         }
-        ObjectMapper  mapper = new ObjectMapper();
-        // Parse JSON string to JsonNode
+        ObjectMapper mapper = new ObjectMapper();
         JsonNode conf = null;
         try {
             conf = mapper.readTree(sb.toString());
@@ -60,13 +55,13 @@ public class ConfigurationManager {
     }
 
     /*
-    * Returns current Loaded Configuration
-    * */
+     * Returns current Loaded Configuration
+     */
     public Configuration getCurrentConfig() {
         if (myCurrentConfig == null) {
             throw new HttpConfigurationException("No current configuration found");
         }
-        return  myCurrentConfig;
+        return myCurrentConfig;
     }
 
 }
