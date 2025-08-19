@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.security.cert.CRL;
 
 /*
 * Driver Class for the HTTP Server
@@ -29,8 +30,18 @@ public class HttpServer {
             InputStream inputStream = socket.getInputStream();
             OutputStream outputStream = socket.getOutputStream();
 
+            // HTML content to be sent as the response body
             String html = "<html><head><title>Simple HTTP Server</title></head>"
-                        + "<body><h1>Welcome to the Simple HTTP Server!</h1></body></html>";
+                    + "<body><h1>Welcome to the Simple HTTP Server!</h1></body></html>";
+
+            final String CRLF = "\n\r";
+
+            // Full HTTP response including status line, headers, and body
+            String response = "HTTP/1.1 200 OK" + CRLF +
+                    "Content-Length: " + html.getBytes().length + CRLF +
+                    CRLF +
+                    html +
+                    CRLF + CRLF;
 
             inputStream.close();
             outputStream.close();
